@@ -10,8 +10,12 @@ const Campaign = () => {
   
   return (
     <div className="container mt-4">
-      <div className="mb-4 mt-8 md:text-3xl text-xl">
+      {/* bug : params are not getting the campaingname correct*/}
+      {/* <div className="mb-4 mt-8 md:text-3xl text-xl">
         Campaign: {campaignName !== "undefined" ? campaignName : "My Campaign"}
+      </div> */}
+      <div className="mb-4 mt-8 md:text-3xl text-xl">
+        Campaign Analytics
       </div>
       <LatestCampaigns />
       <div className="mb-4 md:text-3xl text-xl">Send Campaign</div>
