@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import useFetchShopData from "@/hooks/fetchData";
 import { useParams } from "next/navigation";
 const IndividualShop = () => {
-  const params = useParams<{ shopname: string }>();
-  const decodedItem = decodeURIComponent(params.shopname);
+  const params = useParams<{ "campaign-name": string }>();
+  const decodedItem = decodeURIComponent(params["campaign-name"]);
   console.log(params);
   const { data, loading, error } = useFetchShopData();
   const email = data?.shopDetails[0].email;

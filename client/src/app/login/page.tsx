@@ -37,7 +37,7 @@ const Login = () => {
 
   return (
     <div className="container">
-      <p className="text-center pt-20 text-4xl">Welcome to CRM</p>
+      <p className="text-center pt-20 text-4xl">Welcome to crmX</p>
       <p className="text-center pt-2  text-base text-gray-400">
         Login/Signup to continue with our services.
       </p>
