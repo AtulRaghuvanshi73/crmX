@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 interface Item {
   id: string;
@@ -27,8 +27,9 @@ const CustomerTable = () => {
   const [months, setMonths] = useState(0);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const { data, error, loading } = useFetchCustomerData();
+  const router = useRouter();
   const params = useParams<{ shopname: string }>();
-  const decodedItem = decodeURIComponent(params.shopname);
+  const decodedItem = decodeURIComponent(params.shopname || "");
 
   const items: Item[] = [
     {
@@ -148,8 +149,42 @@ const CustomerTable = () => {
           Show
         </Button>
       </form>
-      <div className="text-sm pb-4">
+      <div className="text-sm pb-2">
         No. of customers: {filteredData?.length}
+      </div>
+      <div className="pb-4">
+        <Button 
+          onClick={() => {
+            try {
+              const username = localStorage.getItem("email");
+              // Make sure to provide a default value if campaignName is undefined
+              const campaignName = params.shopname || decodedItem || "default";
+              
+              if (!username) {
+                alert("Please log in to view analytics");
+                return;
+              }
+              
+              // Email address needs proper encoding to be used in URLs
+              const encodedUsername = encodeURIComponent(username);
+              
+              // Ensure campaignName exists and isn't "undefined"
+              const formattedCampaignName = campaignName === "undefined" ? "default" : campaignName;
+              
+              // Construct URL path properly
+              const path = `/${formattedCampaignName}/${encodedUsername}/campaign`;
+              console.log("Navigating to:", path);
+              
+              router.push(path);
+            } catch (error) {
+              console.error("Navigation error:", error);
+              alert("There was an error navigating to the campaign page");
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          View Analytics
+        </Button>
       </div>
       <Table>
         <TableCaption>A list of your recent Customers.</TableCaption>

@@ -11,9 +11,13 @@ import {
 import useFetchCampaignData from "@/hooks/fetchCampaignData";
 import { Badge } from "../ui/badge";
 import { BarChart } from "@tremor/react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const LatestCampaigns = () => {
   const { data, loading, error } = useFetchCampaignData();
+  const router = useRouter();
+  const params = useParams<{ "campaign-name": string, username: string }>();
 
   if (loading) {
     return <div>Loading...</div>;

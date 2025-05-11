@@ -53,7 +53,11 @@ const CustOrdComponent = () => {
       });
       if (response.ok) {
         alert("Customer submitted");
-        router.push(`${shopName}/${localStorage.getItem("email")}/campaign`);
+        const username = localStorage.getItem("email");
+        if (username) {
+          const encodedUsername = encodeURIComponent(username);
+          router.push(`/${shopName}/${encodedUsername}/campaign`);
+        }
       }
     } catch (error) {
       console.error("Error submitting customer", error);
