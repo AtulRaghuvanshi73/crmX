@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
 
 interface ShopDetail {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   description: string;

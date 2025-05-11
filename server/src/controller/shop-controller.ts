@@ -1,7 +1,31 @@
+import mongoose from "mongoose";
 import Shop from "../model/shop-schema";
 import Customer from "../model/customer-schema";
 import Order from "../model/order-schema";
 import CommunicationLog from "../model/campaign-shema";
+
+export const deleteShop = async (request: any, response: any) => {
+  try {
+    const { id } = request.params;
+    console.log("Attempting to delete shop with ID:", id);
+    
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return response.status(400).json({ message: "Invalid campaign ID format" });
+    }
+    
+    const deletedShop = await Shop.findByIdAndDelete(id);
+    console.log("Delete result:", deletedShop);
+    
+    if (deletedShop) {
+      response.status(200).json({ message: "Campaign deleted successfully", deletedShop });
+    } else {
+      response.status(404).json({ message: "Campaign not found" });
+    }
+  } catch (error: any) {
+    console.error("Error deleting campaign:", error);
+    response.status(500).json({ message: error.message });
+  }
+};
 
 export const addShop = async (request: any, response: any) => {
   try {

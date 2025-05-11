@@ -5,6 +5,7 @@ import {
   getCampaignData,
   getCustData,
   getShopData,
+  deleteShop,
 } from "../controller/shop-controller";
 import amqp from "amqplib";
 import Order from "../model/order-schema";
@@ -19,6 +20,7 @@ let channel: any, connection;
 
 router.post("/addshop", addShop);
 router.post("/getshopdata", getShopData);
+router.delete("/deleteshop/:id", deleteShop);
 // router.post("/getcustdata", getCustData);
 router.post("/getAllOrderData", getAllOrderData);
 router.post("/getAllCustomerData", getCustData);

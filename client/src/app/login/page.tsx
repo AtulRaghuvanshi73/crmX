@@ -45,7 +45,7 @@ const Login = () => {
         className="bg-white text-black flex gap-2 m-auto mt-8 hover:bg-white hover:bg-opacity-70"
         onClick={handleClick}
       >
-        <Chrome className="w-5" /> Continue with Google
+         Continue with Google
       </Button>
     </div>
   );
