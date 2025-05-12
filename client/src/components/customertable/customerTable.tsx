@@ -12,6 +12,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useParams, useRouter } from "next/navigation";
+import { NLSegment } from "@/components/nl-segment/NLSegment";
+
+// Define customer type
+type CustomerDetails = {
+  custName: string;
+  custEmail: string;
+  spends: number;
+  visits: number;
+  lastVisits: string;
+  shopName: string;
+  [key: string]: string | number; // Add index signature for dynamic access
+};
 
 interface Item {
   id: string;
@@ -20,12 +32,20 @@ interface Item {
   filterFn: (customer: any) => boolean;
 }
 
+type Rule = {
+  field: string;
+  operator: string;
+  value: number | string;
+  humanReadable: string;
+};
+
 const CustomerTable = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [cost, setCost] = useState(0);
   const [visits, setVisits] = useState(0);
   const [months, setMonths] = useState(0);
-  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<CustomerDetails[]>([]);
+  const [appliedRules, setAppliedRules] = useState<Rule[]>([]);
   const { data, error, loading } = useFetchCustomerData();
   const router = useRouter();
   const params = useParams<{ shopname: string }>();
@@ -91,6 +111,58 @@ const CustomerTable = () => {
 
     setFilteredData(filtered!);
   };
+  
+  const handleApplyRules = (rules: Rule[]) => {
+    setAppliedRules(rules);
+    
+    if (!data) return;
+    
+    let filtered = [...data] as CustomerDetails[];
+    
+    // Apply each rule as a filter
+    rules.forEach((rule) => {
+      filtered = filtered.filter((customer) => {
+        // Use type assertion for field access to avoid TypeScript errors
+        const fieldValue = customer[rule.field as keyof CustomerDetails];
+        // Convert both values to strings or numbers for comparison
+        const customerValue = typeof fieldValue === 'number' ? fieldValue : Number(fieldValue);
+        const ruleValue = typeof rule.value === 'number' ? rule.value : Number(rule.value);
+        
+        // Handle date fields specially
+        if (rule.field === 'lastVisits') {
+          const customerDate = new Date(String(fieldValue)).getTime();
+          const ruleDate = new Date(String(rule.value)).getTime();
+          
+          switch (rule.operator) {
+            case '>': return customerDate > ruleDate;
+            case '<': return customerDate < ruleDate;
+            case '>=': return customerDate >= ruleDate;
+            case '<=': return customerDate <= ruleDate;
+            default: return true;
+          }
+        }
+        
+        // Handle numeric comparisons
+        switch (rule.operator) {
+          case '>': return customerValue > ruleValue;
+          case '<': return customerValue < ruleValue;
+          case '>=': return customerValue >= ruleValue;
+          case '<=': return customerValue <= ruleValue;
+          case '==':
+          case '===':
+            // String comparison for equality
+            return String(fieldValue) === String(rule.value);
+          default:
+            return true;
+        }
+      });
+    });
+    
+    setFilteredData(filtered);
+    
+    // Clear any manually selected filters
+    setSelectedItems([]);
+  };
 
   return (
     <>
@@ -152,7 +224,7 @@ const CustomerTable = () => {
       <div className="text-sm pb-2">
         No. of customers: {filteredData?.length}
       </div>
-      <div className="pb-4">
+      <div className="pb-4 flex space-x-2">
         <Button 
           onClick={() => {
             try {
@@ -185,7 +257,33 @@ const CustomerTable = () => {
         >
           View Analytics
         </Button>
+        
+        <NLSegment onApplyRules={handleApplyRules} />
       </div>
+      
+      {appliedRules.length > 0 && (
+        <div className="mb-4 p-3 rounded bg-gray-800 bg-opacity-30 border-gray-700 border text-sm">
+          <div className="font-medium mb-2">Applied Segment Rules:</div>
+          <ul className="space-y-1">
+            {appliedRules.map((rule, index) => (
+              <li key={index} className="text-gray-300">
+                {rule.humanReadable}
+              </li>
+            ))}
+          </ul>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-2 bg-white text-black hover:bg-white hover:text-black hover:opacity-100"
+            onClick={() => {
+              setAppliedRules([]);
+              setFilteredData(data || []);
+            }}
+          >
+            Clear Rules
+          </Button>
+        </div>
+      )}
       <Table>
         <TableCaption>A list of your recent Customers.</TableCaption>
         <TableHeader>

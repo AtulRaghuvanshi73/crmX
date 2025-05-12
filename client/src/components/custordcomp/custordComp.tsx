@@ -92,7 +92,7 @@ const CustOrdComponent = () => {
         <DialogTrigger asChild>
           <div className="flex items-center gap-2 m-auto cursor-pointer">
             <Button variant="outline" className="text-black hover:opacity-75">
-              +Order
+              Add Order
             </Button>
           </div>
         </DialogTrigger>
@@ -169,7 +169,7 @@ const CustOrdComponent = () => {
         <DialogTrigger asChild>
           <div className="flex items-center gap-2 m-auto cursor-pointer">
             <Button variant="outline" className="text-black hover:opacity-75">
-              +Customer
+              Add Customer
             </Button>
           </div>
         </DialogTrigger>
