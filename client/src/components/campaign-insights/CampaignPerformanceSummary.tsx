@@ -121,26 +121,44 @@ export function CampaignPerformanceSummary() {
   if (campaignLoading || customerLoading) {
     return <div className="text-center py-4">Loading campaign data...</div>;
   }
-
   return (
-    <Card className="p-4 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-gray-700">
-      <h3 className="font-semibold text-lg mb-2">Campaign Performance Summary</h3>
+    <Card className="p-6 bg-gradient-to-br from-violet-900/40 via-blue-900/30 to-indigo-900/40 border border-indigo-700/50 shadow-xl rounded-xl overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/20 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-600/20 rounded-full blur-3xl -z-10"></div>
+      
+      <div className="flex items-center space-x-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-400">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        </svg>
+        <h3 className="font-semibold text-lg text-white">Campaign Performance Summary</h3>
+      </div>
       
       {isGenerating ? (
-        <div className="flex items-center space-x-2">
-          <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-white rounded-full"></div>
-          <p>Generating insights...</p>
-        </div>      ) : insightSummary ? (
-        <div className="text-sm leading-relaxed">
+        <div className="flex items-center space-x-3 bg-blue-900/20 p-3 rounded-lg border border-blue-500/30">
+          <div className="animate-spin h-5 w-5 border-3 border-t-transparent border-blue-400 rounded-full"></div>
+          <p className="text-blue-300">Generating AI insights...</p>
+        </div>
+      ) : insightSummary ? (
+        <div className="bg-indigo-900/20 backdrop-blur-sm p-4 rounded-lg border border-indigo-500/30">
           {/* Format the insight summary to make it more readable */}
           {insightSummary.split('\n').map((line, index) => (
-            <p key={index} className={line.includes(':') ? 'font-medium' : ''}>
+            <p key={index} className={line.includes(':') 
+              ? 'font-medium text-indigo-200 mb-1' 
+              : 'text-gray-300 mb-2'}>
               {line.trim()}
             </p>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-gray-400">No campaign data available.</p>
+        <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-2 text-gray-500">
+            <path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"></path>
+            <rect width="18" height="12" x="3" y="4" rx="2"></rect>
+            <line x1="12" x2="12" y1="9" y2="9"></line>
+          </svg>
+          <p className="text-sm text-gray-400">No campaign data available yet.</p>
+          <p className="text-xs text-gray-500 mt-1">Send your first campaign to see insights</p>
+        </div>
       )}
     </Card>
   );

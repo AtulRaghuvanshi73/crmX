@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useParams, useRouter } from "next/navigation";
 import { NLSegment } from "@/components/nl-segment/NLSegment";
+import { toast } from "sonner";
 
 // Define customer type
 type CustomerDetails = {
@@ -233,7 +234,7 @@ const CustomerTable = () => {
               const campaignName = params.shopname || decodedItem || "default";
               
               if (!username) {
-                alert("Please log in to view analytics");
+                toast.warning("Please log in to view analytics");
                 return;
               }
               
@@ -250,7 +251,7 @@ const CustomerTable = () => {
               router.push(path);
             } catch (error) {
               console.error("Navigation error:", error);
-              alert("There was an error navigating to the campaign page");
+              toast.error("There was an error navigating to the campaign page");
             }
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white"

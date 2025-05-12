@@ -4,6 +4,7 @@ import useFetchShopData from "@/hooks/fetchData";
 import ShopCard from "./shopCard";
 import useFetchCustomerData from "@/hooks/fetchCustomerData";
 import { BACKEND_SERVER_URL } from "@/utils/env";
+import { toast } from "sonner";
 
 const ShopCardSection = () => {
   const { data, error, loading } = useFetchShopData();
@@ -40,15 +41,15 @@ const ShopCardSection = () => {
       if (response.ok) {
         // Remove the deleted shop from local state
         setShopDetails(shopDetails.filter(shop => shop._id !== id));
-        alert('Campaign deleted successfully');
+        toast.success('Campaign deleted successfully');
       } else {
         const errorText = await response.text();
         console.error('Delete campaign error:', errorText);
-        alert(`Failed to delete campaign: ${errorText}`);
+        toast.error(`Failed to delete campaign: ${errorText}`);
       }
     } catch (error) {
       console.error('Error deleting campaign:', error);
-      alert('An error occurred while deleting the campaign');
+      toast.error('An error occurred while deleting the campaign');
     } finally {
       setIsDeleting(false);
     }

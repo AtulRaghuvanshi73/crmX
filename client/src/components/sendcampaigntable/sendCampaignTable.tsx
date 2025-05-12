@@ -18,6 +18,7 @@ import {
 import useFetchCustomerData from "@/hooks/fetchCustomerData";
 import { BACKEND_SERVER_URL } from "@/utils/env";
 import { CampaignPerformanceSummary } from "@/components/campaign-insights/CampaignPerformanceSummary";
+import { toast } from "sonner";
 
 export type Customer = {
   custName: string;
@@ -187,15 +188,13 @@ const SendCampaignTable = () => {
     setFilteredData(filtered);
   };
 
-  // Message handling removed
-
   const handleSendCampaign = async () => {
     const selectedRows = table
       .getSelectedRowModel()
       .rows.map((row) => row.original);
       
     if (selectedRows.length === 0) {
-      alert("Please select at least one recipient");
+      toast.warning("Please select at least one recipient");
       return;
     }
     
@@ -212,13 +211,14 @@ const SendCampaignTable = () => {
         }),
       });
       if (response.ok) {
-        alert("Campaign sent successfully");
+        toast.success("Campaign sent successfully");
         window.location.reload();
       } else {
-        alert("Failed to send campaign");
+        toast.error("Failed to send campaign");
       }
     } catch (error) {
       console.error("Error sending campaign", error);
+      toast.error("Error sending campaign. Please try again.");
     }
   };
 

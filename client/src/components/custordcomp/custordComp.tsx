@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { BACKEND_SERVER_URL } from "@/utils/env";
+import { toast } from "sonner";
 
 const CustOrdComponent = () => {
   const router = useRouter();
@@ -52,7 +53,7 @@ const CustOrdComponent = () => {
         body: JSON.stringify(customerData),
       });
       if (response.ok) {
-        alert("Customer submitted");
+        toast.success("Customer submitted successfully");
         const username = localStorage.getItem("email");
         if (username) {
           const encodedUsername = encodeURIComponent(username);
@@ -61,6 +62,7 @@ const CustOrdComponent = () => {
       }
     } catch (error) {
       console.error("Error submitting customer", error);
+      toast.error("Failed to submit customer data");
     }
   };
 
@@ -76,13 +78,14 @@ const CustOrdComponent = () => {
         body: JSON.stringify(orderData),
       });
       if (response.ok) {
-        alert("Order submitted");
+        toast.success("Order submitted successfully");
         window.location.reload();
       } else {
-        alert("Something went wrong");
+        toast.error("Something went wrong");
       }
     } catch (error) {
       console.error("Error submitting order", error);
+      toast.error("Failed to submit order");
     }
   };
 

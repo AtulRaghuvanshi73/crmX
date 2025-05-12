@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BACKEND_SERVER_URL } from "@/utils/env";
+import { toast } from "sonner";
 
 type Tcampaign = {
   id: string; // MongoDB _id
@@ -15,7 +16,7 @@ const ShopCard = (props: Tcampaign) => {
         props.onDelete(props.id);
       } catch (error) {
         console.error("Error deleting campaign:", error);
-        alert("Failed to delete campaign");
+        toast.error("Failed to delete campaign");
       }
     }
   };
