@@ -52,12 +52,12 @@ crmX/
 
 ## Features
 
-- 📊 **Dashboard Analytics**: Real-time insights into customer behavior and sales
-- 🤖 **AI-Powered Suggestions**: Gemini AI integration for smart message suggestions  
-- 📱 **Campaign Management**: Create, track, and analyze marketing campaigns
-- 👥 **Customer Segmentation**: Natural language customer segmentation
-- 📈 **Performance Tracking**: Monitor campaign performance with detailed metrics
-- 🔐 **Authentication**: Secure login via Firebase Google Auth
+- **Dashboard Analytics**: Real-time insights into customer behavior and sales
+- **AI-Powered Suggestions**: Gemini AI integration for smart message suggestions  
+- **Campaign Management**: Create, track, and analyze marketing campaigns
+- **Customer Segmentation**: Natural language customer segmentation
+- **Performance Tracking**: Monitor campaign performance with detailed metrics
+- **Authentication**: Secure login via Firebase Google Auth
 
 ## Getting Started
 
