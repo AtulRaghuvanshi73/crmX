@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { queryGemini } from "@/utils/gemini";
+import { Loader } from "@/components/ui/loader";
 
 type Rule = {
   field: string;
@@ -123,14 +124,11 @@ export function NLSegment({ onApplyRules }: { onApplyRules?: (rules: Rule[]) => 
             <div className="p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded text-sm mb-4">
               {error}
             </div>
-          )}
-
-          {isProcessing && (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-              <p className="mt-2">Processing your request...</p>
+          )}          {isProcessing && (
+            <div className="py-8">
+              <Loader text="Processing your request..." />
             </div>
-          )}          {segmentRules && !isProcessing && (
+          )}{segmentRules && !isProcessing && (
             <div className="border border-gray-600 rounded p-3 bg-gray-800 bg-opacity-50 my-4">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium">Generated Rules:</h3>                <Button 

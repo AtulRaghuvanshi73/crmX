@@ -5,6 +5,7 @@ import ShopCard from "./shopCard";
 import useFetchCustomerData from "@/hooks/fetchCustomerData";
 import { BACKEND_SERVER_URL } from "@/utils/env";
 import { toast } from "sonner";
+import { Loader, ErrorMessage } from "@/components/ui/loader";
 
 const ShopCardSection = () => {
   const { data, error, loading } = useFetchShopData();
@@ -19,11 +20,11 @@ const ShopCardSection = () => {
   }, [data]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader text="Loading shops..." />;
   }
 
   if (error) {
-    return <div>Nothing to show now...</div>;
+    return <ErrorMessage message="Nothing to show now..." />;
   }
 
   if (!data || !Array.isArray(data.shopDetails)) {

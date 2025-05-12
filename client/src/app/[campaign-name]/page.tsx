@@ -5,6 +5,7 @@ import OrderTable from "@/components/ordertable/orderTable";
 import { Button } from "@/components/ui/button";
 import useFetchShopData from "@/hooks/fetchData";
 import { useParams } from "next/navigation";
+import { Loader, ErrorMessage } from "@/components/ui/loader";
 const IndividualShop = () => {
   const params = useParams<{ "campaign-name": string }>();
   const decodedItem = decodeURIComponent(params["campaign-name"]);
@@ -12,7 +13,7 @@ const IndividualShop = () => {
   const { data, loading, error } = useFetchShopData();
   const email = data?.shopDetails[0].email;
   if (!data) {
-    return <div>Loading...</div>;
+    return <Loader text="Loading campaign data..." />;
   }
 
   if (email != localStorage.getItem("email")) {

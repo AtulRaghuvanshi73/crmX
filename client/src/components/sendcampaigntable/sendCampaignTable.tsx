@@ -19,6 +19,7 @@ import useFetchCustomerData from "@/hooks/fetchCustomerData";
 import { BACKEND_SERVER_URL } from "@/utils/env";
 import { CampaignPerformanceSummary } from "@/components/campaign-insights/CampaignPerformanceSummary";
 import { toast } from "sonner";
+import { Loader, ErrorMessage } from "@/components/ui/loader";
 
 export type Customer = {
   custName: string;
@@ -227,9 +228,9 @@ const SendCampaignTable = () => {
 
       {/* Audience Table */}
       {loading ? (
-        <div>Loading...</div>
+        <Loader text="Loading customer data..." />
       ) : error ? (
-        <div>Error: {error}</div>
+        <ErrorMessage message={`Error: ${error}`} />
       ) : (
         <>
           <div className="mb-2 flex justify-between items-center">

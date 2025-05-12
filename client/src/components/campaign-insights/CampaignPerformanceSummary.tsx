@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import useFetchCampaignData from "@/hooks/fetchCampaignData";
 import useFetchCustomerData from "@/hooks/fetchCustomerData";
 import { queryGemini } from "@/utils/gemini";
+import { Loader } from "@/components/ui/loader";
 
 export function CampaignPerformanceSummary() {
   const { data: campaignData, loading: campaignLoading } = useFetchCampaignData();
@@ -117,9 +118,8 @@ export function CampaignPerformanceSummary() {
       setIsGenerating(false);
     }
   };
-
   if (campaignLoading || customerLoading) {
-    return <div className="text-center py-4">Loading campaign data...</div>;
+    return <Loader text="Loading campaign data..." containerClassName="py-4" />;
   }
   return (
     <Card className="p-6 bg-gradient-to-br from-violet-900/40 via-blue-900/30 to-indigo-900/40 border border-indigo-700/50 shadow-xl rounded-xl overflow-hidden relative">
@@ -132,13 +132,11 @@ export function CampaignPerformanceSummary() {
         </svg>
         <h3 className="font-semibold text-lg text-white">Campaign Performance Summary</h3>
       </div>
-      
-      {isGenerating ? (
+        {isGenerating ? (
         <div className="flex items-center space-x-3 bg-blue-900/20 p-3 rounded-lg border border-blue-500/30">
-          <div className="animate-spin h-5 w-5 border-3 border-t-transparent border-blue-400 rounded-full"></div>
-          <p className="text-blue-300">Generating AI insights...</p>
+          <Loader text="Generating AI insights..." size="sm" containerClassName="!h-auto" />
         </div>
-      ) : insightSummary ? (
+      ): insightSummary ? (
         <div className="bg-indigo-900/20 backdrop-blur-sm p-4 rounded-lg border border-indigo-500/30">
           {/* Format the insight summary to make it more readable */}
           {insightSummary.split('\n').map((line, index) => (

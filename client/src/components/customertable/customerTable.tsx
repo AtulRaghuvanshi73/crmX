@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useParams, useRouter } from "next/navigation";
 import { NLSegment } from "@/components/nl-segment/NLSegment";
+import { Loader, ErrorMessage } from "@/components/ui/loader";
 import { toast } from "sonner";
 
 // Define customer type
@@ -84,11 +85,11 @@ const CustomerTable = () => {
   }, [data]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader text="Loading customer data..." />;
   }
 
   if (error) {
-    return <div>Error loading shop data.</div>;
+    return <ErrorMessage message="Error loading customer data. Please try again later." />;
   }
 
   const handleCheckboxChange = (itemId: string, checked: boolean) => {
@@ -167,7 +168,7 @@ const CustomerTable = () => {
 
   return (
     <>
-      <div className="text-xl mt-4">Customer Table</div>
+      <div className="text-xl mt-8 mb-4">Customer Table</div>
       <form
         onSubmit={handleSubmit}
         className="flex flex-wrap items-center md:gap-4 gap-2 mt-2 pb-2"
@@ -285,29 +286,38 @@ const CustomerTable = () => {
           </Button>
         </div>
       )}
-      <Table>
-        <TableCaption>A list of your recent Customers.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Spends</TableHead>
-            <TableHead>Visits</TableHead>
-            <TableHead className="text-right">Last Visit</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredData.map((customer, id) => (
-            <TableRow key={id}>
-              <TableCell className="font-medium">{customer.custName}</TableCell>
-              <TableCell>{customer.spends}</TableCell>
-              <TableCell>{customer.visits}</TableCell>
-              <TableCell className="text-right">
-                {customer.lastVisits}
-              </TableCell>
+      <div className="rounded-lg overflow-hidden border border-gray-700 shadow-md bg-gray-800 bg-opacity-20 mb-8">
+        <Table>
+          <TableCaption className="text-gray-400 pb-4">A list of your recent customers</TableCaption>
+          <TableHeader className="bg-gray-800 bg-opacity-40">
+            <TableRow>
+              <TableHead className="py-4 text-base font-medium text-white">Customer Name</TableHead>
+              <TableHead className="py-4 text-base font-medium text-white">Spends</TableHead>
+              <TableHead className="py-4 text-base font-medium text-white">Visits</TableHead>
+              <TableHead className="py-4 text-base font-medium text-white text-right">Last Visit</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredData.map((customer, id) => (
+              <TableRow 
+                key={id} 
+                className="hover:bg-gray-700 hover:bg-opacity-20 transition-colors"
+              >
+                <TableCell className="py-3 font-medium">{customer.custName}</TableCell>
+                <TableCell className="py-3">₹{customer.spends.toLocaleString()}</TableCell>
+                <TableCell className="py-3">{customer.visits}</TableCell>
+                <TableCell className="py-3 text-right">
+                  {new Date(customer.lastVisits).toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 };

@@ -26,6 +26,7 @@ import {
   RadialLinearScale
 } from 'chart.js';
 import { Bar, Doughnut, Pie, Line, PolarArea } from 'react-chartjs-2';
+import { Loader, ErrorMessage } from "@/components/ui/loader";
 
 // Register ChartJS components
 ChartJS.register(
@@ -47,11 +48,11 @@ const LatestCampaigns = () => {
   const params = useParams<{ "campaign-name": string, username: string }>();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader text="Loading campaign data..." />;
   }
 
   if (error) {
-    return <div>Error loading shop data.</div>;
+    return <ErrorMessage message="Error loading campaign data." />;
   }
 
   // Get campaign statistics
