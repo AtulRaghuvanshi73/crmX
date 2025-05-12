@@ -20,7 +20,10 @@ app.use(cors({
       origin.includes('.vercel.app') || 
       origin.includes('onrender.com') || 
       origin.includes('localhost') ||
-      origin === 'http://localhost:3000'
+      origin === 'http://localhost:3000' ||
+      origin === 'http://localhost:8000' ||
+      origin === 'https://crm-x-orcin.vercel.app'||
+      origin ===  'https://crm-x-2.vercel.app/'
     ) {
       return callback(null, true);
     }
