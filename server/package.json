@@ -6,6 +6,11 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "tsc": "tsc",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start:prod": "node dist/index.js & npm run start:all:prod",
+    "start:all:prod": "concurrently \"node dist/consumer.js\" \"node dist/dummyVendorAPI.js\" \"node dist/deliveryReceiptAPI.js\"",
     "start:consumer": "ts-node ./src/consumer.ts",
     "start:dummyVendorAPI": "ts-node ./src/dummyVendorAPI.ts",
     "start:deliveryReceiptAPI": "ts-node ./src/deliveryReceiptAPI.ts",
