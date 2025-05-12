@@ -39,19 +39,16 @@ export function CampaignPerformanceSummary() {
       
       const highSpendDeliveryRate = highSpendCustomers.length > 0 
         ? Math.round((highSpendDelivered / highSpendCustomers.length) * 100) 
-        : 0;
-
-      // Prepare segments stats for insight generation
+        : 0;      // Prepare segments stats for insight generation
       let recentPurchasers = 0;
       const lastWeekTimestamp = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days ago
       
       customerData.forEach(customer => {
-        if (customer.lastVisits && customer.lastVisits > lastWeekTimestamp) {
+        if (customer.lastVisits && Number(customer.lastVisits) > lastWeekTimestamp) {
           recentPurchasers++;
         }
       });
-      
-      // Generate insights using AI
+        // Generate insights using AI
       const prompt = `
         Generate a human-readable insight summary for a marketing campaign with the following stats:
         - Total audience size: ${totalCustomers}
@@ -66,16 +63,53 @@ export function CampaignPerformanceSummary() {
         Keep it to 2-3 sentences, making it easily scannable.
         Include the specific numbers mentioned above like delivery rates, audience size, etc.
         Make it sound natural and focus on the marketing implications.
-      `;
+        
+        IMPORTANT: Return ONLY the plain text summary without any JSON formatting, code blocks, or markdown.
+      `;    
 
       if (campaignData.length === 0) {
         setInsightSummary("No campaign data available yet. Send your campaign to see performance insights.");
         setIsGenerating(false);
         return;
+      }        const result = await queryGemini(prompt);
+        // Try to parse the result if it's in JSON format
+      try {
+        // Check if result appears to be JSON
+        if (result.includes('{') && result.includes('}')) {
+          // Extract JSON string using basic string manipulation instead of regex
+          const startIndex = result.indexOf('{');
+          const endIndex = result.lastIndexOf('}') + 1;
+          
+          if (startIndex !== -1 && endIndex !== -1) {
+            const jsonString = result.substring(startIndex, endIndex);
+            const parsedData = JSON.parse(jsonString);
+            
+            // Check if the JSON contains humanReadable fields
+            if (parsedData.description) {
+              setInsightSummary(parsedData.description);
+              return;
+            } else if (parsedData.rules && Array.isArray(parsedData.rules)) {
+              // Extract humanReadable values from rules
+              const insights = parsedData.rules
+                .filter((rule: { humanReadable?: string }) => rule.humanReadable)
+                .map((rule: { humanReadable: string }) => rule.humanReadable)
+                .join(" ");
+              
+              if (insights) {
+                setInsightSummary(insights);
+                return;
+              }
+            }
+          }
+        }
+        
+        // If not JSON or parsing failed, use the plain text
+        setInsightSummary(result);
+      } catch (error) {
+        console.error("Error parsing insight result:", error);
+        // Fallback to using the raw result
+        setInsightSummary(result);
       }
-      
-      const result = await queryGemini(prompt);
-      setInsightSummary(result);
     } catch (error) {
       console.error("Error generating campaign summary:", error);
       setInsightSummary("Unable to generate campaign insights at this time.");
@@ -96,9 +130,15 @@ export function CampaignPerformanceSummary() {
         <div className="flex items-center space-x-2">
           <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-white rounded-full"></div>
           <p>Generating insights...</p>
+        </div>      ) : insightSummary ? (
+        <div className="text-sm leading-relaxed">
+          {/* Format the insight summary to make it more readable */}
+          {insightSummary.split('\n').map((line, index) => (
+            <p key={index} className={line.includes(':') ? 'font-medium' : ''}>
+              {line.trim()}
+            </p>
+          ))}
         </div>
-      ) : insightSummary ? (
-        <p className="text-sm leading-relaxed">{insightSummary}</p>
       ) : (
         <p className="text-sm text-gray-400">No campaign data available.</p>
       )}
