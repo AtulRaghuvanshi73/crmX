@@ -13,6 +13,7 @@ const app = express();
 // ✅ Configure CORS to allow specific origins
 app.use(cors({
   origin: [
+    '*',
     'http://localhost:3000',
     'http://localhost:8000',
     'https://crm-x-orcin.vercel.app',
