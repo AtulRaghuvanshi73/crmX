@@ -18,12 +18,16 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Cross } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BACKEND_SERVER_URL } from "@/utils/env";
 
 const StartShop = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const [name, setName] = useState<string | undefined>(undefined);
   const [details, setDetails] = useState<string | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
@@ -33,7 +37,12 @@ const StartShop = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    
     try {
+      setIsSubmitting(true);
+      console.log("Submitting to:", `${BACKEND_SERVER_URL}/addshop`);
+      
       const response = await fetch(`${BACKEND_SERVER_URL}/addshop`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,8 +51,15 @@ const StartShop = () => {
           name: name,
           description: details,
         }),
+        credentials: 'include',
       });
+      
+      console.log("Response status:", response.status);
+      
       if (response.ok) {
+        const data = await response.json();
+        console.log("Response data:", data);
+        
         toast.success("✨Shop Launched!", {
           position: "bottom-right",
           autoClose: 5000,
@@ -55,10 +71,30 @@ const StartShop = () => {
           theme: "light",
           transition: Bounce,
         });
-        window.location.reload();
+        
+        // Use Next.js router for navigation
+        setTimeout(() => {
+          if (name) {
+            const slug = name.toLowerCase().replace(/\s+/g, '-');
+            const encodedSlug = encodeURIComponent(slug);
+            console.log(`Navigating to: /${encodedSlug}`);
+            
+            // Use router.push for client-side navigation - just navigate to the campaign page
+            router.push(`/${encodedSlug}`);
+          } else {
+            router.refresh();
+          }
+        }, 1500);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("API Error:", errorData);
+        toast.error("Failed to create campaign. Server responded with an error.");
       }
     } catch (error: unknown) {
-      console.log("Error", error);
+      console.error("Error creating shop:", error);
+      toast.error("Failed to create campaign. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -107,8 +143,9 @@ const StartShop = () => {
                 <Button
                   className="bg-white text-black flex gap-2 m-auto font-normal hover:bg-white hover:bg-opacity-70"
                   type="submit"
+                  disabled={isSubmitting}
                 >
-                  Submit
+                  {isSubmitting ? 'Creating...' : 'Submit'}
                 </Button>
               </DialogFooter>
             </form>

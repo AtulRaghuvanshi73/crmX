@@ -42,7 +42,7 @@ const ShopCard = (props: Tcampaign) => {
       <div className="text-xs text-gray-500">{props.details}</div>
       <div className="flex gap-2 mt-1">
         <Link
-          href={`/${encodeURIComponent(props.name)}`}
+          href={`/${encodeURIComponent(props.name.toLowerCase().replace(/\s+/g, '-'))}`}
           className="text-sm hover:underline ml-auto text-blue-400"
           prefetch={false} // Disable prefetch to avoid server-side localStorage errors
         >

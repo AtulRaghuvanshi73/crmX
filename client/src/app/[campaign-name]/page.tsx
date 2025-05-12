@@ -9,14 +9,18 @@ import { Loader, ErrorMessage } from "@/components/ui/loader";
 import { useEffect, useState } from "react";
 
 const IndividualShop = () => {
-  const params = useParams<{ "campaign-name": string }>();
-  const decodedItem = params ? decodeURIComponent(params["campaign-name"] as string) : "";
+  const params = useParams<{ "campaign-name": string, username?: string }>();
+  const decodedItem = params ? decodeURIComponent(String(params["campaign-name"] || "")) : "";
+  const username = params && params.username ? decodeURIComponent(String(params.username)) : "";
   const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
     setIsClient(true);
-    console.log("Campaign params:", params);
-  }, [params]);
+    console.log("Campaign page params:", { campaignName: decodedItem, username });
+    
+    // No need to redirect, we can handle just the campaign name parameter
+    // We'll fetch the shop data by name instead of requiring email in the URL
+  }, [params, decodedItem, isClient]);
   
   const { data, loading, error } = useFetchShopData();
   

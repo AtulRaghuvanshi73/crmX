@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
 import { BACKEND_SERVER_URL } from "@/utils/env";
+import { useParams } from "next/navigation";
 
 interface ShopDetail {
   _id: string;
@@ -25,7 +26,8 @@ const useFetchShopData = (): FetchDataResponse => {
   const [data, setData] = useState<ShopData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const notify = useNotificationCenter();
+  const params = useParams<{ "campaign-name": string }>();
+  const campaignName = params ? decodeURIComponent(String(params["campaign-name"] || "")) : "";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,13 +44,21 @@ const useFetchShopData = (): FetchDataResponse => {
           return;
         }
 
+        // If we have a campaign name from the URL, include it in the request
+        const requestBody: any = { email };
+        if (campaignName) {
+          requestBody.campaignName = campaignName;
+        }
+
+        console.log("Fetching shop data with:", requestBody);
+        
         const response = await fetch(`${BACKEND_SERVER_URL}/getshopdata`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ email }),
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -71,7 +81,7 @@ const useFetchShopData = (): FetchDataResponse => {
     };
 
     fetchData();
-  }, []);
+  }, [campaignName]);
 
   return { data, error, loading };
 };
