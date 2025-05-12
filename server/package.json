@@ -11,7 +11,7 @@
     "start:deliveryReceiptAPI": "ts-node ./src/deliveryReceiptAPI.ts",
     "start:all": "concurrently \"npm run start:consumer\" \"npm run start:dummyVendorAPI\" \"npm run start:deliveryReceiptAPI\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "develop": "nodemon --config nodemon.json"
+    "dev": "nodemon --config nodemon.json"
   },
   "keywords": [],
   "author": "",
