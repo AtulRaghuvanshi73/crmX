@@ -5,67 +5,51 @@ import bodyParser from "body-parser";
 import { Connection } from "./database/db";
 import Router from "./routes/route";
 
-// Configure dotenv properly
+// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
-// Configure CORS to allow requests from your Vercel domain
+
+// ✅ Configure CORS to allow specific origins
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow any Vercel domains and localhost
-    if (
-      origin.includes('.vercel.app') || 
-      origin.includes('onrender.com') || 
-      origin.includes('localhost') ||
-      origin === 'http://localhost:3000' ||
-      origin === 'http://localhost:8000' ||
-      origin === 'https://crm-x-orcin.vercel.app'||
-      origin ===  'https://crm-x-2.vercel.app/'
-    ) {
-      return callback(null, true);
-    }
-    
-    console.log('CORS blocked origin:', origin);
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://crm-x-orcin.vercel.app',
+    'https://crm-x-2.vercel.app'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
 }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Handle OPTIONS preflight requests
-app.options('*', cors());
-
-// Add CORS headers to all responses
+// ✅ Optional: Log incoming origin for debugging
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  console.log("Incoming request from:", req.headers.origin);
   next();
 });
 
+// Parse request bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Use your defined routes
 app.use("/", Router);
+
+// Connect to the database
 Connection();
 
-// Get port from environment variable or use default
+// Define server port
 const PORT = process.env.PORT || 8000;
 
-// Start server with error handling for port conflicts
+// Start server with port conflict fallback
 const server = app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}.`);
 })
 .on('error', (error: any) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Trying port ${Number(PORT) + 1}...`);
-    // Try the next port
     const newPort = Number(PORT) + 1;
+    console.error(`Port ${PORT} is already in use. Trying port ${newPort}...`);
     server.close();
     app.listen(newPort, () => console.log(`Server is now listening on port ${newPort}.`));
   } else {
