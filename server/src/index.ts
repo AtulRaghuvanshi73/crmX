@@ -9,10 +9,33 @@ import Router from "./routes/route";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// Configure CORS to allow requests from your Vercel domain
+app.use(cors({
+  origin: [
+    'https://crm-x-2.vercel.app', 
+    'https://crmx-v-2.vercel.app',
+    'http://localhost:3000'  // For local development
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Handle OPTIONS preflight requests
+app.options('*', cors());
+
+// Add CORS headers to all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
+
 app.use("/", Router);
 Connection();
 

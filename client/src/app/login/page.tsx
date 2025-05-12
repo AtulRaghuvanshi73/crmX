@@ -23,7 +23,11 @@ const Login = () => {
         console.error("Email is null");
       }
     } catch (error: unknown) {
-      console.log("Error during sign in", error);
+      console.error("Error during sign in", error);
+      // Display error to user for better debugging
+      if (error instanceof Error) {
+        alert(`Authentication error: ${error.message}\n\nPossible fix: Make sure your domain is authorized in Firebase console.`);
+      }
     }
   };
 
