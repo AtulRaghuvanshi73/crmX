@@ -48,11 +48,15 @@ import mongoose from "mongoose";
 import CommunicationLog from "./model/campaign-shema"; // Update path if necessary
 import { Connection } from "./database/db"; // Update path if necessary
 
-// Interface for Customer messages
-interface Customer {
+// Interface for Campaign messages
+interface CampaignMessage {
   custName: string;
   custEmail: string;
   status: string;
+  messageSubject?: string;
+  messageBody?: string;
+  suggestedImageType?: string;
+  timestamp?: number;
 }
 
 // RabbitMQ and Batch Processing Configurations
@@ -87,10 +91,15 @@ async function connectRabbitMQ() {
       if (msg) {
         try {
           // Parse the message content
-          const customer: Customer = JSON.parse(msg.content.toString());
+          const message: CampaignMessage = JSON.parse(msg.content.toString());
 
-          if (customer.status == "SENT") {
-            console.log(`Email sent to ${customer.custName}`);
+          if (message.status == "SENT") {
+            console.log(`Email sent to ${message.custName}`);
+            console.log(`Subject: ${message.messageSubject || 'No subject'}`);
+            console.log(`Message: ${message.messageBody?.substring(0, 50)}...`);
+            if (message.suggestedImageType) {
+              console.log(`Image type: ${message.suggestedImageType}`);
+            }
           }
 
           // Acknowledge the message

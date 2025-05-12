@@ -4,6 +4,10 @@ interface CampaignDetails {
   custName: string;
   custEmail: string;
   status: string;
+  messageSubject?: string;
+  messageBody?: string;
+  suggestedImageType?: string;
+  timestamp?: number;
 }
 
 type FetchDataResponse = {

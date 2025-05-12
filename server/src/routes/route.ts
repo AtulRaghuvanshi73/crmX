@@ -68,10 +68,14 @@ router.post("/customer", async (req, res) => {
 });
 
 router.post("/sendCampaign", async (req, res) => {
-  const { customers } = req.body;
+  const { customers, messageSubject, messageBody, suggestedImageType } = req.body;
 
   if (!customers || !Array.isArray(customers)) {
-    return res.status(400).send("Invalid input");
+    return res.status(400).send("Invalid input: customers array is required");
+  }
+
+  if (!messageSubject || !messageBody) {
+    return res.status(400).send("Invalid input: message subject and body are required");
   }
 
   try {
@@ -81,9 +85,17 @@ router.post("/sendCampaign", async (req, res) => {
 
     // Publish each customer message to the exchange
     for (const customer of customers) {
-      const message = JSON.stringify(customer);
+      const messageData = {
+        ...customer,
+        messageSubject,
+        messageBody,
+        suggestedImageType: suggestedImageType || null,
+        timestamp: Date.now()
+      };
+      
+      const message = JSON.stringify(messageData);
       await channel.publish(EXCHANGE, "", Buffer.from(message));
-      console.log(`Message published: ${message}`);
+      console.log(`Message published to ${customer.custEmail}`);
     }
 
     res.status(200).send("Campaign messages sent to exchange");

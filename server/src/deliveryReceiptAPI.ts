@@ -31,11 +31,15 @@ import mongoose from "mongoose";
 import CommunicationLog from "./model/campaign-shema"; // Update path if necessary
 import { Connection } from "./database/db"; // Update path if necessary
 
-// Interface for Customer messages
-interface Customer {
+// Interface for Campaign messages
+interface CampaignMessage {
   custName: string;
   custEmail: string;
-  status: string;
+  status?: string;
+  messageSubject?: string;
+  messageBody?: string;
+  suggestedImageType?: string;
+  timestamp?: number;
 }
 
 // RabbitMQ and Batch Processing Configurations
@@ -70,8 +74,8 @@ async function connectRabbitMQ() {
       if (msg) {
         try {
           // Parse the message content
-          const customer: Customer = JSON.parse(msg.content.toString());
-          console.log(`Received messagehiii: ${msg.content.toString()}`);
+          const campaignMessage: CampaignMessage = JSON.parse(msg.content.toString());
+          console.log(`Received message: ${campaignMessage.custEmail}`);
           await new Promise((resolve) => setTimeout(resolve, 2000));
           const statuses: "SENT" | "FAILED" =
             Math.random() < 0.9 ? "SENT" : "FAILED";
@@ -79,8 +83,8 @@ async function connectRabbitMQ() {
           // Update status in MongoDB
           const updatedLog = await CommunicationLog.findOneAndUpdate(
             {
-              custName: customer.custName,
-              custEmail: customer.custEmail,
+              custName: campaignMessage.custName,
+              custEmail: campaignMessage.custEmail,
               status: "PENDING",
             }, // Filter criteria
             { status: statuses }, // Update operation

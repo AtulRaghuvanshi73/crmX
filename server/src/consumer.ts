@@ -4,10 +4,14 @@ import mongoose from "mongoose";
 import CommunicationLog from "./model/campaign-shema"; // Update path if necessary
 import { Connection } from "./database/db"; // Update path if necessary
 
-// Interface for Customer messages
-interface Customer {
+// Interface for Campaign messages
+interface CampaignMessage {
   custName: string;
   custEmail: string;
+  messageSubject?: string;
+  messageBody?: string;
+  suggestedImageType?: string;
+  timestamp?: number;
 }
 
 // RabbitMQ and Batch Processing Configurations
@@ -42,14 +46,18 @@ async function connectRabbitMQ() {
     channel.consume(queue.queue, async (msg) => {
       if (msg) {
         try {
-          const customer: Customer = JSON.parse(msg.content.toString());
+          const campaignMessage: CampaignMessage = JSON.parse(msg.content.toString());
 
           // console.log(`Received message: ${msg.content.toString()}`);
 
-          // Save to MongoDB
+          // Save to MongoDB with additional message data
           const log = new CommunicationLog({
-            custName: customer.custName,
-            custEmail: customer.custEmail,
+            custName: campaignMessage.custName,
+            custEmail: campaignMessage.custEmail,
+            messageSubject: campaignMessage.messageSubject || "",
+            messageBody: campaignMessage.messageBody || "",
+            suggestedImageType: campaignMessage.suggestedImageType || null,
+            timestamp: campaignMessage.timestamp || Date.now(),
             status: "PENDING",
           });
           await log.save();

@@ -54,8 +54,10 @@ const LatestCampaigns = () => {
     return <div>Error loading shop data.</div>;
   }
 
+  // Get campaign statistics
   const sentCount = data!.filter((item) => item.status === "SENT").length;
   const failedCount = data!.filter((item) => item.status === "FAILED").length;
+  const deliveryRate = data!.length > 0 ? (sentCount / data!.length * 100).toFixed(1) : "0";
   console.log("Sent Count:", sentCount); // Log sent count
   console.log("Failed Count:", failedCount); // Log failed count
 
@@ -114,12 +116,40 @@ const LatestCampaigns = () => {
 
   return (
     <div className="mb-8">
+      {/* Campaign Performance Summary */}
+      {data!.length > 0 && (
+        <div className="p-4 bg-gray-800 bg-opacity-20 rounded-lg mb-6">
+          <h3 className="text-xl font-medium mb-3">Campaign Insights</h3>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <div className="bg-blue-900 bg-opacity-30 p-3 rounded-md">
+              <div className="text-3xl font-semibold mb-1">{sentCount + failedCount}</div>
+              <div className="text-sm text-gray-300">Total Recipients</div>
+            </div>
+            <div className="bg-green-900 bg-opacity-30 p-3 rounded-md">
+              <div className="text-3xl font-semibold mb-1">{sentCount}</div>
+              <div className="text-sm text-gray-300">Successfully Delivered</div>
+            </div>
+            <div className="bg-purple-900 bg-opacity-30 p-3 rounded-md">
+              <div className="text-3xl font-semibold mb-1">{deliveryRate}%</div>
+              <div className="text-sm text-gray-300">Delivery Rate</div>
+            </div>
+          </div>
+          <div className="text-sm bg-gray-900 bg-opacity-40 p-3 rounded-md">
+            <p className="leading-relaxed">
+              Your campaign reached <strong>{sentCount + failedCount}</strong> customers with a <strong>{deliveryRate}%</strong> delivery rate. 
+              {failedCount > 0 ? ` ${failedCount} messages failed to deliver.` : ' All messages were delivered successfully.'}
+            </p>
+          </div>
+        </div>
+      )}
+
       <Table>
-        <TableCaption>A list of your recent Orders.</TableCaption>
+        <TableCaption>A list of your recent campaign messages.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead className="hidden md:table-cell">Subject</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -129,6 +159,7 @@ const LatestCampaigns = () => {
               <TableRow key={id}>
                 <TableCell className="font-medium">{item.custName}</TableCell>
                 <TableCell>{item.custEmail}</TableCell>
+                <TableCell className="hidden md:table-cell">{item.messageSubject || "No subject"}</TableCell>
                 <TableCell>
                   <Badge
                     className={`${item.status == "FAILED" ? "bg-red-400 bg-opacity-40" : "bg-green-400 bg-opacity-40"}`}
@@ -140,7 +171,7 @@ const LatestCampaigns = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={3}>No campaign data available</TableCell>
+              <TableCell colSpan={4}>No campaign data available</TableCell>
             </TableRow>
           )}
         </TableBody>
