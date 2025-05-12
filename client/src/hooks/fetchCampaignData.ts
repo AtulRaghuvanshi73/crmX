@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BACKEND_SERVER_URL } from "@/utils/env";
 
 interface CampaignDetails {
   custName: string;
@@ -25,7 +26,7 @@ const useFetchCampaignData = (): FetchDataResponse => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/getAllCampaignData",
+          `${BACKEND_SERVER_URL}/getAllCampaignData`,
           {
             method: "GET",
           },

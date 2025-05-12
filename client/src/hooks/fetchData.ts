@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
+import { BACKEND_SERVER_URL } from "@/utils/env";
 
 interface ShopDetail {
   _id: string;
@@ -34,7 +35,7 @@ const useFetchShopData = (): FetchDataResponse => {
           throw new Error("Email not found in local storage");
         }
 
-        const response = await fetch("http://localhost:8000/getshopdata", {
+        const response = await fetch(`${BACKEND_SERVER_URL}/getshopdata`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
