@@ -1,13 +1,19 @@
 export const getEnvVariable = (key: string): string => {
   // For client-side code, we need to access the Next.js exposed variables
-  const value = process.env[`NEXT_PUBLIC_${key}`];
+  const fullKey = key.startsWith('NEXT_PUBLIC_') ? key : `NEXT_PUBLIC_${key}`;
+  const value = process.env[fullKey];
   
   if (!value) {
-    console.warn(`Environment variable ${key} is not defined`);
+    // More detailed logging for debugging
+    console.warn(`Environment variable ${fullKey} is not defined`);
     return '';
   }
   
   return value;
 };
 
-export const BACKEND_SERVER_URL = process.env.NEXT_PUBLIC_BACKEND_SERVER_URL || 'http://localhost:8000';
+// Ensure BACKEND_SERVER_URL is always available
+export const BACKEND_SERVER_URL = process.env.NEXT_PUBLIC_BACKEND_SERVER_URL || 'https://crmx-xstq.onrender.com';
+if (typeof window !== 'undefined') {
+  console.log("Backend URL being used:", BACKEND_SERVER_URL);
+}

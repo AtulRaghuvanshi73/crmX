@@ -5,6 +5,9 @@ const getGeminiClient = () => {
   const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   
   if (!apiKey) {
+    console.error("Gemini API key not found in environment variables. This may cause issues with natural language segment rules.");
+    // For deployment debugging
+    console.log("Available env vars:", Object.keys(process.env).filter(k => k.startsWith('NEXT_PUBLIC_')));
     throw new Error("Gemini API key not found. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.");
   }
   

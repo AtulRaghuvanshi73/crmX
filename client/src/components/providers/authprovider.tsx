@@ -18,9 +18,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
-    if (email) {
-      setUser(email);
+    // Only run this effect on the client side
+    if (typeof window !== 'undefined') {
+      const email = localStorage.getItem("email");
+      if (email) {
+        setUser(email);
+      }
     }
   }, []);
 

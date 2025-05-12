@@ -32,10 +32,13 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
-    if (email!) {
-      setValue(email);
-      router.push("/");
+    // Safely check for localStorage availability
+    if (typeof window !== 'undefined') {
+      const email = localStorage.getItem("email");
+      if (email) {  // Fixed typo: was email!
+        setValue(email);
+        router.push("/");
+      }
     }
   }, [router]);
 

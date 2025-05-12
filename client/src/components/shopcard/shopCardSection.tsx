@@ -19,16 +19,24 @@ const ShopCardSection = () => {
     }
   }, [data]);
 
+  // Add debugging for Vercel deployment
+  useEffect(() => {
+    console.log("Backend URL:", BACKEND_SERVER_URL);
+    console.log("Loading state:", loading);
+    console.log("Error state:", error);
+    console.log("Data state:", data);
+  }, [BACKEND_SERVER_URL, loading, error, data]);
+
   if (loading) {
-    return <Loader text="Loading shops..." />;
+    return <Loader text="Loading campaigns..." />;
   }
 
   if (error) {
-    return <ErrorMessage message="Nothing to show now..." />;
+    return <ErrorMessage message={`Error loading campaigns: ${error}`} />;
   }
 
   if (!data || !Array.isArray(data.shopDetails)) {
-    return <div>No shop data available.</div>;
+    return <div className="p-4 text-center">No campaigns available. Start by creating one!</div>;
   }
 
   const handleDelete = async (id: string) => {

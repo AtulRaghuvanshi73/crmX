@@ -11,11 +11,21 @@ dotenv.config();
 const app = express();
 // Configure CORS to allow requests from your Vercel domain
 app.use(cors({
-  origin: [
-    'https://crm-x-2.vercel.app', 
-    'https://crmx-v-2.vercel.app',
-    'http://localhost:3000'  // For local development
-  ],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow any Vercel domains and localhost
+    if (
+      origin.includes('.vercel.app') || 
+      origin.includes('localhost') ||
+      origin === 'http://localhost:3000'
+    ) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

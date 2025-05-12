@@ -30,9 +30,16 @@ const useFetchShopData = (): FetchDataResponse => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Check if we're in the browser before accessing localStorage
+        if (typeof window === 'undefined') {
+          return; // Exit early if we're on the server
+        }
+        
         const email = localStorage.getItem("email");
         if (!email) {
-          throw new Error("Email not found in local storage");
+          setError("Not logged in");
+          setLoading(false);
+          return;
         }
 
         const response = await fetch(`${BACKEND_SERVER_URL}/getshopdata`, {
@@ -45,14 +52,18 @@ const useFetchShopData = (): FetchDataResponse => {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
         }
 
-        const responseData: ShopData = await response.json();
+        const responseData = await response.json();
+        console.log("Shop data fetched successfully:", responseData);
         setData(responseData);
       } catch (error: unknown) {
+        console.error("Fetch error:", error);
         if (error instanceof Error) {
-          setError(error.message);
+          setError(`Error loading campaigns: ${error.message}`);
+        } else {
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false);

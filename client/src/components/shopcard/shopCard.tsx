@@ -44,6 +44,7 @@ const ShopCard = (props: Tcampaign) => {
         <Link
           href={`/${encodeURIComponent(props.name)}`}
           className="text-sm hover:underline ml-auto text-blue-400"
+          prefetch={false} // Disable prefetch to avoid server-side localStorage errors
         >
           Show details
         </Link>
