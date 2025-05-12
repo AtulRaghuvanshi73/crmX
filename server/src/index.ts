@@ -50,7 +50,7 @@ app.use("/", Router);
 Connection();
 
 // Get port from environment variable or use default
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 10000;
 
 // Start server with error handling for port conflicts
 const server = app.listen(PORT, () => {
